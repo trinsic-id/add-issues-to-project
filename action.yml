@@ -1,0 +1,36 @@
+name: 'Add Issues To Project'
+description: 'Add issues to a given github project automatically'
+inputs:
+  githubToken:
+    description: 'the github token to use to fetch latest version'
+    required: true
+    default: ''
+  githubProjectNumber:
+    description: 'Github project board number'
+    required: true
+    default: ''
+  githubOrgName:
+    description: 'Name of the github organization'
+    required: true
+    default: 'trinsic-id'
+  githubRepoName:
+    description: 'Name of repository to scan for issues'
+    required: true
+    default: 'okapi'
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - name: Install requirements
+      run: |
+        pip install -r ${{ github.action_path }}/requirements.txt
+        python ${{ github.action_path }}/github_management.py
+      env:
+        API_GITHUB_TOKEN: ${{ inputs.githubToken }}
+        GITHUB_PROJECT_NUMBER: ${{ inputs.githubProjectNumber }}
+        GITHUB_REPO_NAME: ${{ inputs.githubRepoName }}
+        GITHUB_ORG_NAME: ${{ inputs.githubOrgName }}
